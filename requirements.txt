@@ -1,0 +1,13 @@
+# Потоковая обработка
+faust-streaming==0.11.3
+
+# Совместимая версия aiokafka (0.14.0 несовместима с faust-streaming 0.11.3)
+aiokafka==0.10.0
+
+# Kafka-клиент (для тестового скрипта tests/send_test_data.py)
+confluent-kafka==2.3.0
+
+# Инфраструктура (версии образов Docker)
+# confluentinc/cp-zookeeper:7.5.0
+# confluentinc/cp-kafka:7.5.0
+# provectuslabs/kafka-ui:v0.7.0
