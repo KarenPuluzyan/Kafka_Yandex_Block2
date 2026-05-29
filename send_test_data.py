@@ -100,6 +100,6 @@ for msg in test_messages:
 producer.flush()
 
 print("\n=== Тестовые данные отправлены ===")
-print("Логи приложения: docker-compose logs -f faust-app")
+print("Логи приложения: docker compose logs -f faust-app")
 print("Kafka UI:        http://localhost:8080")
 print("Faust API:       http://localhost:6066/censored/list")
