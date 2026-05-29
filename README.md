@@ -73,7 +73,7 @@ pip install faust-streaming==0.11.3 aiokafka==0.10.0 confluent-kafka==2.3.0
 
 Настройки:
 - `KAFKA_DEFAULT_REPLICATION_FACTOR: 3` — каждый топик реплицируется на все три брокера
-- `KAFKA_MIN_INSYNC_REPLICAS: 1` — запись подтверждается одной репликой (для разработки)
+- `KAFKA_MIN_INSYNC_REPLICAS: 2` — запись подтверждается минимум двумя репликами из трёх
 - `KAFKA_AUTO_CREATE_TOPICS_ENABLE: false` — топики создаются только явно через kafka-init
 
 ### Порядок запуска (depends_on)
@@ -161,6 +161,12 @@ censored_words (Table, 1 партиция) ← изменение разреше
 Входящее сообщение (user_id → recipient_id)
         │
         ▼
+ [stream.group_by(recipient_id)]
+ Маршрутизация на партицию по recipient_id —
+ гарантирует что blocked_list получателя
+ находится на той же партиции что и сообщение
+        │
+        ▼
  [stream.filter()]  — stateless
  user_id ∈ blocked_list[recipient_id]?
         │
@@ -177,6 +183,10 @@ censored_words (Table, 1 партиция) ← изменение разреше
          [Sink: log_delivered()]
          Логирование доставки
 ```
+
+> **Важно:** без `group_by(recipient_id)` сообщения без ключа распределяются
+> по случайным партициям. В результате `blocked_list` конкретного получателя
+> может находиться на другой партиции и фильтрация молча не применяется.
 
 ---
 
@@ -346,3 +356,4 @@ docker compose down
 # Остановить и удалить все данные (топики, changelog)
 docker compose down -v
 ```
+
