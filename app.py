@@ -17,8 +17,9 @@ KAFKA_BROKER = os.getenv(
 app = faust.App(
     "kafkablock2",
     broker=KAFKA_BROKER,
-    store="memory://",
+    store="rocksdb://",
     value_serializer="json",
+    topic_replication_factor=3,   # все внутренние топики Faust создаются с replication-factor=3
 )
 
 # ---------------------------------------------------------------------------
@@ -161,7 +162,11 @@ async def handle_block_events(events):
 
 @app.agent(messages_topic, sink=[log_delivered])
 async def process_messages(stream):
-    async for msg in stream.filter(
+    # group_by(recipient_id) гарантирует что все сообщения одного получателя
+    # попадают на одну партицию — ту же, где хранится его blocked_list.
+    # Без этого сообщения без ключа распределяются по случайным партициям
+    # и фильтрация молча не применяется.
+    async for msg in stream.group_by(Message.recipient_id).filter(
         lambda m: m.user_id not in _get_blocked(m.recipient_id)
     ):
         clean_msg = apply_censorship(msg)
