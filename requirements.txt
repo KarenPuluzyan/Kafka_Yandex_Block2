@@ -4,6 +4,9 @@ faust-streaming==0.11.3
 # Совместимая версия aiokafka (0.14.0 несовместима с faust-streaming 0.11.3)
 aiokafka==0.10.0
 
+# Персистентное хранилище таблиц на диске (RocksDB 6, совместим с faust-streaming 0.11.3)
+faust-streaming-rocksdb==0.9.3
+
 # Kafka-клиент (для тестового скрипта tests/send_test_data.py)
 confluent-kafka==2.3.0
 
