@@ -33,7 +33,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_MIN_INSYNC_REPLICAS: 2
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
     healthcheck:
       test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server kafka-0:9092 > /dev/null 2>&1"]
@@ -60,7 +60,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_MIN_INSYNC_REPLICAS: 2
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
     healthcheck:
       test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server kafka-1:9092 > /dev/null 2>&1"]
@@ -87,7 +87,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_MIN_INSYNC_REPLICAS: 2
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
     healthcheck:
       test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server kafka-2:9092 > /dev/null 2>&1"]
@@ -152,4 +152,8 @@ services:
     command: faust -A app worker -l info
     volumes:
       - ./:/app
+      - faust_data:/app/kafkablock2-data   # персистентное хранилище RocksDB
     working_dir: /app
+
+volumes:
+  faust_data:
